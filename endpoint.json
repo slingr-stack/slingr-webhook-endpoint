@@ -1,0 +1,201 @@
+{
+  "label": "SLINGR Webhook",
+  "name": "slingr-webhook",
+  "apiVersion": "v1",
+  "internal": false,
+  "configurationType": "GLOBAL",
+  "deployment": {
+    "profiles": [
+      {
+        "name": "default",
+        "label": "Default",
+        "memory": 256,
+        "description": "Default configuration"
+      }
+    ],
+    "allowMultipleInstances": true
+  },
+  "icon48": "https://storage.googleapis.com/static.slingrs.io/platform/endpoints/slingr.png",
+  "configurationHelpUrl": "/endpoints_slingr_webhook.html#configuration",
+  "status": "ACTIVE",
+  "stores": [],
+  "events": [],
+  "functions": [
+    {
+      "label": "Publish data event",
+      "name": "publishEvent"
+    }
+  ],
+  "scripts": [],
+  "listeners": [
+    "dynamicDataListener.js"
+  ],
+  "configuration": [
+    {
+      "label": "Notifications for all entities",
+      "name": "allEntities",
+      "type": "toggle",
+      "defaultValue": true
+    },
+    {
+      "label": "Events to notify",
+      "name": "eventsToNotify",
+      "type": "buttonsGroup",
+      "multiplicity": "many",
+      "required": "config.allEntities",
+      "visibility": "config.allEntities",
+      "defaultValue": [
+        "recordCreated",
+        "recordChanged",
+        "recordDeleted",
+        "actionPerformed"
+      ],
+      "typeOptions": {
+        "possibleValues": [
+          {
+            "label": "Create",
+            "name": "recordCreated"
+          },
+          {
+            "label": "Update",
+            "name": "recordChanged"
+          },
+          {
+            "label": "Delete",
+            "name": "recordDeleted"
+          },
+          {
+            "label": "Actions",
+            "name": "actionPerformed"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Entities to notify events",
+      "name": "entitiesToNotifyEvents",
+      "type": "fieldsGroup",
+      "multiplicity": "many",
+      "visibility": "!config.allEntities",
+      "typeOptions": {
+        "fields": [
+          {
+            "label": "Entity",
+            "name": "entity",
+            "type": "entity",
+            "required": true
+          },
+          {
+            "label": "Events to notify",
+            "name": "entityEventsToNotify",
+            "type": "buttonsGroup",
+            "multiplicity": "many",
+            "required": "config.entitiesToNotifyEvents[_currentIndex].entity",
+            "visibility": "config.entitiesToNotifyEvents[_currentIndex].entity",
+            "defaultValue": [
+              "recordCreated",
+              "recordChanged",
+              "recordDeleted",
+              "actionPerformed"
+            ],
+            "typeOptions": {
+              "possibleValues": [
+                {
+                  "label": "Create",
+                  "name": "recordCreated"
+                },
+                {
+                  "label": "Update",
+                  "name": "recordChanged"
+                },
+                {
+                  "label": "Delete",
+                  "name": "recordDeleted"
+                },
+                {
+                  "label": "Actions",
+                  "name": "actionPerformed"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "Webhooks type",
+      "name": "webhooksType",
+      "type": "buttonsGroup",
+      "typeOptions": {
+        "possibleValues": [
+          {
+            "label": "Fixed",
+            "name": "fixed"
+          },
+          {
+            "label": "Dynamic",
+            "name": "dynamic"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Webhooks",
+      "name": "webhooks",
+      "type": "fieldsGroup",
+      "required": true,
+      "multiplicity": "many",
+      "visibility": "config.webhooksType == 'fixed'",
+      "typeOptions": {
+        "fields": [
+          {
+            "label": "URL",
+            "name": "url",
+            "type": "text",
+            "required": true,
+            "typeOptions": {
+              "validation": "url"
+            }
+          },
+          {
+            "label": "Verification token",
+            "name": "verificationToken",
+            "type": "text"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Webhooks entity",
+      "name": "webhooksEntity",
+      "type": "entity",
+      "required": true,
+      "visibility": "config.webhooksType == 'dynamic'"
+    },
+    {
+      "label": "Webhooks URL field",
+      "name": "webhooksUrlField",
+      "type": "entityField",
+      "required": true,
+      "visibility": "config.webhooksType == 'dynamic'",
+      "typeOptions": {
+        "entity": "@config.webhooksEntity",
+        "filterTypes": [
+          "url"
+        ]
+      }
+    },
+    {
+      "label": "Webhooks verification token field",
+      "name": "webhooksVerificationTokenField",
+      "type": "entityField",
+      "visibility": "config.webhooksType == 'dynamic'",
+      "typeOptions": {
+        "entity": "@config.webhooksEntity",
+        "filterTypes": [
+          "text"
+        ]
+      }
+    }
+  ]
+}
